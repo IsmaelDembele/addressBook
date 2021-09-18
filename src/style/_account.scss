@@ -1,0 +1,208 @@
+.account {
+  display: grid;
+  grid-template-rows: 7rem 1fr;
+  height: $page-content-height;
+  justify-items: center;
+  align-items: center;
+
+  &__menu-bar {
+    align-self: stretch;
+    justify-self: stretch;
+    background-color: #a6b1e1;
+    display: grid;
+    grid-template-columns: 1fr 15% 15%;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__menu-contact,
+  &__menu-viewContacts {
+    // background-color: red;
+    line-height: 3rem;
+    cursor: pointer;
+    width: 11rem;
+    text-align: center;
+    text-transform: capitalize;
+    border: 1px solid transparent;
+    transition: all 1s;
+
+    &:hover {
+      border: 1px solid #f4eeff;
+    }
+  }
+
+  &__search-bar {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    width: 100%;
+
+    &__input {
+      height: 2rem;
+      border-radius: 7px;
+      margin-left: 25%;
+      margin-right: -2rem;
+      width: 50%;
+      border: none;
+      outline: none;
+    }
+
+    &__input:active,
+    &__input:focus {
+      border: inherit;
+      outline: 1px solid #a6b1e1;
+      padding-left: 0.5rem;
+    }
+
+    &__button {
+      cursor: pointer;
+    }
+  }
+
+  ////////////////////////////////// add contact
+
+  &__add-contact {
+    // justify-self: center;
+    // align-self: center;
+    // width: 100%;
+    min-height: 25rem;
+    background-color: #fff;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+
+    display: Grid;
+    grid-template-rows: 5rem 1fr;
+    row-gap: 1rem;
+  }
+
+  &__add-title {
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    padding: 1.5rem;
+    background-color: $primary;
+    color: #fff;
+  }
+
+  &__form {
+    // background-color: yellowgreen;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    width: 100%;
+  }
+
+  //Mui
+  .MuiFormControl-root {
+    width: 20rem;
+    background-color: white;
+    border-radius: 5px;
+    margin-bottom: $form-margin-bottom;
+  }
+
+  //outline color when focus
+  .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: $primary;
+  }
+
+  &__add-fname {
+    // width: 100%;
+  }
+  &__add-lname {
+    // width: 100%;
+  }
+  &__add-email {
+    // width: 100%;
+  }
+  &__add-phone {
+    // width: 100%;
+  }
+  &__add-address {
+    // width: 100%;
+  }
+  &__add-note {
+    align-self: center;
+    textarea {
+      border-radius: inherit;
+      outline: 0.01rem solid $primary;
+      padding: 0.5rem;
+      font-size: 1rem;
+      width: 20rem;
+      resize: none;
+      margin-bottom: $form-margin-bottom;
+    }
+  }
+
+  .btn {
+    width: 20rem;
+  }
+
+  //////////////////////////// user list
+
+  &__user-list {
+    width: 100%;
+    height: 100%;
+    font-size: 1.3rem;
+    padding: 4rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    // align-items: center;
+  }
+
+  &__user-display {
+    align-self: baseline;
+    min-height: 22rem;
+    width: 25%;
+    line-height: 2rem;
+    padding: 1rem;
+    border-top-left-radius: 4px;
+    border-top-left-radius: 4px;
+    background-color: white;
+    margin-right: 5rem;
+    margin-bottom: $form-margin-bottom;
+  }
+
+  &__fullname-display {
+    // display: block;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    // width: calc(100% + 2rem);
+    background-color: $primary;
+    color: white;
+    height: 4rem;
+    margin: -1rem -1rem 0 -1rem;
+    text-align: center;
+    padding: 1rem;
+    overflow: hidden;
+    margin-bottom: $form-margin-bottom;
+  }
+
+  &__info {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    grid-row: 5rem;
+
+    grid-auto-rows: 4rem;
+    // grid-auto-columns: 1fr 1fr;
+  }
+
+  &__info-value {
+    font-size: 1.1rem;
+  }
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn {
+    // align-self: center;
+    width: 30%;
+    margin-right: 3rem;
+    margin-bottom: 0;
+    text-transform: capitalize;
+  }
+}
