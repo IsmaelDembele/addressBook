@@ -1,11 +1,20 @@
 import React, { useState } from "react";
 import SearchRoundedIcon from "@material-ui/icons/SearchRounded";
-import AddUser from "./AddUser";
-import ContactList from "./ContactList/index";
-import {data} from './data';
+import AddContact from "./AddContact";
+import ViewContact from "./ViewContact/index";
+// import {data} from './data';
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../app/store";
+
+
 
 const UserAccount = () => {
   const [type, setType] = useState<String>("addContact");
+
+  const dispatch = useDispatch();
+  const data = useSelector((state: RootState) => state.userData.contactList);
+
+
 
   const handleAddContact = (): void => {
     setType("addContact");
@@ -30,9 +39,9 @@ const UserAccount = () => {
         </div>
       </div>
 
-      {type === "addContact" && <AddUser />}
+      {type === "addContact" && <AddContact />}
 
-      {type === "contactList" && <ContactList data={data} />}
+      {type === "contactList" && <ViewContact data={data} />}
     </section>
   );
 };
