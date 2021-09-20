@@ -2,8 +2,9 @@
 import TextField from "@material-ui/core/TextField";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router";
 import { RootState } from "../../app/store";
-import { addNewContact } from "../../features/userDataSlice";
+import { addNewContact, setEdit, removeContact } from "../../features/userDataSlice";
 
 const initialContactState = {
   firstname: "",
@@ -20,9 +21,15 @@ const AddContact = () => {
   const dispatch = useDispatch();
 
   const user = useSelector((state: RootState) => state.userData);
+  const history = useHistory();
 
   useEffect(() => {
-    console.log("addData", user);
+    if (user.editContact.value) {
+      const { contactList, editContact } = user;
+      setNewContact(contactList[editContact.index]);
+      dispatch(setEdit({ value: false, index: editContact.index }));
+      dispatch(removeContact(editContact.index));
+    }
   }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -38,6 +45,7 @@ const AddContact = () => {
     if (newContact?.firstname === null) return;
     dispatch(addNewContact(newContact));
     setNewContact(initialContactState);
+    history.push("/"); // this will redirect to the viewContact page
   };
 
   return (

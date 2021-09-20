@@ -2,16 +2,22 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface IContact {
   firstname: string;
-  lastname?: string;
-  email?: string;
+  lastname: string;
+  email: string;
   phone: string;
-  address?: string;
-  note?: string;
+  address: string;
+  note: string;
+}
+
+interface EditContactType {
+  value: boolean;
+  index: number;
 }
 
 interface UserDataState {
   email: string;
   contactList: IContact[];
+  editContact: EditContactType;
 }
 
 const initialState: UserDataState = {
@@ -34,6 +40,10 @@ const initialState: UserDataState = {
       note: "I met him in Houston, TX",
     },
   ],
+  editContact: {
+    value: false,
+    index: -1,
+  },
 };
 
 export const userDataSlice = createSlice({
@@ -52,9 +62,12 @@ export const userDataSlice = createSlice({
     removeContact: (state, action: PayloadAction<number>) => {
       state.contactList.splice(action.payload, 1);
     },
+    setEdit: (state, action: PayloadAction<EditContactType>) => {
+      state.editContact = action.payload;
+    },
   },
 });
 
-export const { connectedUser, addNewContact, removeContact } = userDataSlice.actions;
+export const { connectedUser, addNewContact, removeContact, setEdit } = userDataSlice.actions;
 
 export default userDataSlice.reducer;

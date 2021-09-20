@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { IContact } from "../data";
-import {removeContact} from '../../../features/userDataSlice'
+import { removeContact, setEdit } from "../../../features/userDataSlice";
+import { useHistory } from "react-router-dom";
+import { RootState } from "../../../app/store";
 
 interface ContactType {
   contact: IContact;
@@ -12,16 +14,24 @@ const Contact: React.FC<ContactType> = ({ contact, index }) => {
   const { firstname, lastname, email, phone, address, note } = contact;
 
   const dispatch = useDispatch();
-  
+  const edit = useSelector((state:RootState)=>state.userData.editContact);
+  const history = useHistory();
 
   // useEffect(() => {
   //   console.log(index);
   // }, [index]);
 
   const handleDelete = (index: number) => {
-    console.log('removing data');
-    
+    console.log("removing data");
+
     dispatch(removeContact(index));
+  };
+
+  const handleEdit = () => {
+    console.log('handleedit');
+    
+    dispatch(setEdit({value: true,index: index}));
+    history.push("/account");
   };
 
   return (
@@ -40,10 +50,10 @@ const Contact: React.FC<ContactType> = ({ contact, index }) => {
         <p className="account__info-value">{note}</p>
       </div>
       <div className="account__btn">
-        <button className="btn" onClick={() => handleDelete(index)}>delete contact</button>
-        <button className="btn" >
-          edit contact
+        <button className="btn" onClick={() => handleDelete(index)}>
+          delete contact
         </button>
+        <button className="btn" onClick={()=>handleEdit()}>edit contact</button>
       </div>
     </div>
   );
