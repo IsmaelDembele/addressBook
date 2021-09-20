@@ -3,7 +3,7 @@ import SearchRoundedIcon from "@material-ui/icons/SearchRounded";
 import AddContact from "./AddContact";
 import ViewContact from "./ViewContact/index";
 // import {data} from './data';
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 const options = {
   ADDCONTACT: "addContact",
@@ -12,7 +12,7 @@ const options = {
 const UserAccount = () => {
   const [type, setType] = useState<String>(options.VIEWCONTACT);
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const data = useSelector((state: RootState) => state.userData.contactList);
   const edit = useSelector((state: RootState) => state.userData.editContact);
 

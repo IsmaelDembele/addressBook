@@ -4,13 +4,17 @@
   margin-right: auto;
   width: 90%;
   height: $page-content-height;
-  // height: 80rem;
   grid-template-columns: repeat(auto-fill, minmax(50%, 1fr));
 
   justify-items: center;
-  //   align-content: center;
   row-gap: 10rem;
-  //   justify-content: center;
+
+  @include respond(tab-port) {
+    margin-top: 5rem;
+    grid-template-columns: repeat(auto-fill, minmax(80%, 1fr));
+    min-height: 100vh;
+    row-gap: 5rem;
+  }
 
   &__sign-up,
   &__sign-in {

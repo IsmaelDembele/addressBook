@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useDispatch } from "react-redux";
 import { IContact } from "../data";
 import { removeContact, setEdit } from "../../../features/userDataSlice";
 import { useHistory } from "react-router-dom";
-import { RootState } from "../../../app/store";
+// import { RootState } from "../../../app/store";
 
 interface ContactType {
   contact: IContact;
@@ -14,7 +14,7 @@ const Contact: React.FC<ContactType> = ({ contact, index }) => {
   const { firstname, lastname, email, phone, address, note } = contact;
 
   const dispatch = useDispatch();
-  const edit = useSelector((state:RootState)=>state.userData.editContact);
+  // const edit = useSelector((state:RootState)=>state.userData.editContact);
   const history = useHistory();
 
   // useEffect(() => {
@@ -51,9 +51,9 @@ const Contact: React.FC<ContactType> = ({ contact, index }) => {
       </div>
       <div className="account__btn">
         <button className="btn" onClick={() => handleDelete(index)}>
-          delete contact
+          delete
         </button>
-        <button className="btn" onClick={()=>handleEdit()}>edit contact</button>
+        <button className="btn" onClick={()=>handleEdit()}>edit</button>
       </div>
     </div>
   );

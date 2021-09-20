@@ -24,13 +24,14 @@ const AddContact = () => {
   const history = useHistory();
 
   useEffect(() => {
+    
     if (user.editContact.value) {
       const { contactList, editContact } = user;
       setNewContact(contactList[editContact.index]);
       dispatch(setEdit({ value: false, index: editContact.index }));
       dispatch(removeContact(editContact.index));
     }
-  }, [user]);
+  }, [user,dispatch]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     const { name, value } = e.target;
