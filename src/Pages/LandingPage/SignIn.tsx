@@ -7,8 +7,33 @@ import { RootState } from "../../app/store";
 
 import { useHistory } from "react-router-dom";
 
+import { emailCheck, passwordCheck } from "../../helper/validator_fn";
+
+import { useQuery, gql } from "@apollo/client";
+
+const errorInitialValue = {
+  firstname: false,
+  lastname: false,
+  email: false,
+  password: false,
+  passwordConfirm: false,
+};
+
+const pwLength = 5;
+
+const LOGIN_QUERY = gql`
+  query Query($email: String!, $password: String!) {
+    login(email: $email, password: $password)
+  }
+`;
+
 const SignIn = () => {
-  const [loginInfo, setLoginInfo] = useState({ email: "hi@hi.com", password: "12345" });
+  const [loginInfo, setLoginInfo] = useState({ email: "", password: "" });
+  const [myError, setMyError] = useState(errorInitialValue);
+  const { loading, error, data, refetch } = useQuery(LOGIN_QUERY, {
+    variables: { email: loginInfo.email, password: loginInfo.password },
+  });
+
   const history = useHistory();
 
   const dispatch = useDispatch();
@@ -18,24 +43,42 @@ const SignIn = () => {
   useEffect(() => {
     console.log("is connected", isConnected);
     if (isConnected) history.push("/account");
-  }, [isConnected,history]);
+  }, [isConnected, history]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): void => {
     const { value, name } = e.target;
     setLoginInfo(prev => ({ ...prev, [name]: value }));
+
+    if (name === "email") {
+      const test = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) || value === "";
+      emailCheck(setMyError, test);
+    }
+
+    if (name === "password") {
+      const test = value.length >= pwLength || value === "";
+
+      passwordCheck(setMyError, test);
+    }
   };
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
     e.preventDefault();
-    dispatch(logInUser(loginInfo));
-    dispatch(connectedUser(loginInfo.email));
+
+    refetch({
+      email: loginInfo.email,
+      password: loginInfo.password,
+    });
+    console.log("data inside login", data);
+
+    dispatch(logInUser(data.login));
+    // dispatch(connectedUser(loginInfo.email));
     setLoginInfo({ email: "", password: "" });
   };
 
   return (
     <div className="landing-page__sign-in">
       <form action="" method="#" className="landing-page__sign-in__form">
-        <div className="landing-page__sign-in__text">Log In to Your Account</div>
+        <div className="landing-page__sign-in__text">Sign in</div>
         <div className="landing-page__sign-in__email">
           <TextField
             id="email"
@@ -45,6 +88,7 @@ const SignIn = () => {
             size="small"
             type="email"
             value={loginInfo.email}
+            error={myError.email}
             onChange={e => handleChange(e)}
           />
         </div>
@@ -57,6 +101,7 @@ const SignIn = () => {
             size="small"
             type="password"
             value={loginInfo.password}
+            error={myError.password}
             onChange={e => handleChange(e)}
           />
         </div>

@@ -4,10 +4,10 @@ interface ConnectionState {
   value: boolean;
 }
 
-interface Login {
-  email: string;
-  password: string;
-}
+// interface Login {
+//   email: string;
+//   password: string;
+// }
 
 const initialState: ConnectionState = {
   value: false,
@@ -17,13 +17,8 @@ export const connectionSlice = createSlice({
   name: "connection",
   initialState,
   reducers: {
-    logInUser: (state, action: PayloadAction<Login>) => {
-      if (action.payload.email === "hi@hi.com" && action.payload.password === "12345") {
-        
-        state.value = true;
-      } else {
-        state.value = false;
-      }
+    logInUser: (state, action: PayloadAction<boolean>) => {
+      state.value = action.payload;
     },
 
     logOutUser: state => {
