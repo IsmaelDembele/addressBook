@@ -13,7 +13,7 @@ const ViewContact: React.FC<Data> = props => {
 
   return (
     <div className="account__user-list">
-      {data.map((contact, index) => {
+      {data?.map((contact, index) => {
         return <Contact key={index} contact={contact} index={index}  />;
       })}
     </div>

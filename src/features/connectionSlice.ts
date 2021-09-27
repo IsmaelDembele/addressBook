@@ -2,27 +2,31 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface ConnectionState {
   value: boolean;
+  token: string;
 }
 
-// interface Login {
-//   email: string;
-//   password: string;
-// }
+interface ILogin {
+  connected: boolean;
+  token: string;
+}
 
 const initialState: ConnectionState = {
   value: false,
+  token: "",
 };
 
 export const connectionSlice = createSlice({
   name: "connection",
   initialState,
   reducers: {
-    logInUser: (state, action: PayloadAction<boolean>) => {
-      state.value = action.payload;
+    logInUser: (state, action: PayloadAction<ILogin>) => {
+      state.value = action.payload.connected;
+      state.token = action.payload.token;
     },
 
     logOutUser: state => {
       state.value = false;
+      state.token = "";
     },
   },
 });

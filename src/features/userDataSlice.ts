@@ -1,6 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface IContact {
+  id?: number;
+  useremail: string;
   firstname: string;
   lastname: string;
   email: string;
@@ -23,22 +25,26 @@ interface UserDataState {
 const initialState: UserDataState = {
   email: "",
   contactList: [
-    {
-      firstname: "Ismael",
-      lastname: "Dembele",
-      email: "dembele@gmail.com",
-      phone: "757 224 1454",
-      address: "12345 Mcknight Dr, Pittsburgh PA 15237",
-      note: "I met him in Newport News Va",
-    },
-    {
-      firstname: "Amadou",
-      lastname: "Dembele",
-      email: "amadou@gmail.com",
-      phone: "757 224 4457",
-      address: "1 Washington blv, Newport News VA 23608",
-      note: "I met him in Houston, TX",
-    },
+    // {
+    //   id:1,
+    //   useremail: "hi@hi.com",
+    //   firstname: "Ismael",
+    //   lastname: "Dembele",
+    //   email: "dembele@gmail.com",
+    //   phone: "757 224 1454",
+    //   address: "12345 Mcknight Dr, Pittsburgh PA 15237",
+    //   note: "I met him in Newport News Va",
+    // },
+    // {
+    //   id:2,
+    //   useremail: "hi@hi.com",
+    //   firstname: "Amadou",
+    //   lastname: "Dembele",
+    //   email: "amadou@gmail.com",
+    //   phone: "757 224 4457",
+    //   address: "1 Washington blv, Newport News VA 23608",
+    //   note: "I met him in Houston, TX",
+    // },
   ],
   editContact: {
     value: false,
@@ -50,6 +56,9 @@ export const userDataSlice = createSlice({
   name: "userData",
   initialState,
   reducers: {
+    initContactList: (state, action: PayloadAction<IContact[]>) => {
+      state.contactList = action.payload;
+    },
     connectedUser: (state, action: PayloadAction<string>) => {
       state.email = action.payload;
     },
@@ -68,6 +77,7 @@ export const userDataSlice = createSlice({
   },
 });
 
-export const { connectedUser, addNewContact, removeContact, setEdit } = userDataSlice.actions;
+export const { connectedUser, addNewContact, removeContact, setEdit, initContactList } =
+  userDataSlice.actions;
 
 export default userDataSlice.reducer;

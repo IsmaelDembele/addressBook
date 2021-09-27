@@ -3,24 +3,54 @@ import SearchRoundedIcon from "@material-ui/icons/SearchRounded";
 import AddContact from "./AddContact";
 import ViewContact from "./ViewContact/index";
 // import {data} from './data';
-import {  useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../app/store";
+import { useQuery, gql } from "@apollo/client";
+import { initContactList } from "../../features/userDataSlice";
+
 const options = {
   ADDCONTACT: "addContact",
   VIEWCONTACT: "viewContact",
 };
+
+const GET_CONTACTS_QUERY = gql`
+  query Query($useremail: String!) {
+    getContacts(useremail: $useremail) {
+      id
+      useremail
+      firstname
+      lastname
+      email
+      phone
+      address
+      note
+    }
+  }
+`;
+
 const UserAccount = () => {
   const [type, setType] = useState<String>(options.VIEWCONTACT);
-
-  // const dispatch = useDispatch();
-  const data = useSelector((state: RootState) => state.userData.contactList);
+  const user = useSelector((state: RootState) => state.userData);
   const edit = useSelector((state: RootState) => state.userData.editContact);
 
+  const { loading, error, data, refetch } = useQuery(GET_CONTACTS_QUERY, {
+    variables: { useremail: user.email },
+  });
+
+  const dispatch = useDispatch();
+
+  //get data from back-end and pass it to userData
+
   useEffect(() => {
-    if (edit.value) { 
+    if (edit.value) {
       setType(options.ADDCONTACT);
     }
   }, [edit]);
+  useEffect(() => {
+    // console.log(data.getContacts);
+
+    dispatch(initContactList(data?.getContacts));
+  }, [data]);
 
   const handleAddContact = (): void => {
     setType(options.ADDCONTACT);
@@ -47,7 +77,7 @@ const UserAccount = () => {
 
       {type === options.ADDCONTACT && <AddContact />}
 
-      {type === options.VIEWCONTACT && <ViewContact data={data} />}
+      {type === options.VIEWCONTACT && <ViewContact data={user.contactList} />}
     </section>
   );
 };

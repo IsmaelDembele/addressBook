@@ -69,9 +69,10 @@ const SignIn = () => {
       password: loginInfo.password,
     });
     console.log("data inside login", data);
-
-    dispatch(logInUser(data.login));
-    // dispatch(connectedUser(loginInfo.email));
+    const token: string = data.login;
+    const connected = token.length > 0;
+    dispatch(logInUser({connected, token}));
+    dispatch(connectedUser(loginInfo.email));
     setLoginInfo({ email: "", password: "" });
   };
 
