@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface IContact {
-  id?: number;
+  id: number;
   useremail: string;
   firstname: string;
   lastname: string;

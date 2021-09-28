@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { IContact } from "../data";
 import { removeContact, setEdit } from "../../../features/userDataSlice";
 import { useHistory } from "react-router-dom";
+import { useMutation, gql } from "@apollo/client";
+
 // import { RootState } from "../../../app/store";
 
 interface ContactType {
@@ -10,27 +12,42 @@ interface ContactType {
   index: number;
 }
 
+const DELETE_CONTACT_MUTATION = gql`
+  mutation DeleteContactMutation($useremail: String!, $id: Int!) {
+    deleteContact(useremail: $useremail, id: $id)
+  }
+`;
+
 const Contact: React.FC<ContactType> = ({ contact, index }) => {
-  const { firstname, lastname, email, phone, address, note } = contact;
+  const { id, useremail, firstname, lastname, email, phone, address, note } = contact;
+  const [deleteContact, { data, loading, error }] = useMutation(DELETE_CONTACT_MUTATION);
 
   const dispatch = useDispatch();
   // const edit = useSelector((state:RootState)=>state.userData.editContact);
   const history = useHistory();
 
-  // useEffect(() => {
-  //   console.log(index);
-  // }, [index]);
+  useEffect(() => {
+    console.log(data);
+    if (data?.deleteContact) dispatch(removeContact(index));
+  }, [data]);
 
   const handleDelete = (index: number) => {
     console.log("removing data");
 
-    dispatch(removeContact(index));
+    deleteContact({
+      variables: {
+        useremail: useremail,
+        id: id,
+      },
+    });
+
+    // dispatch(removeContact(index));
   };
 
   const handleEdit = () => {
-    console.log('handleedit');
-    
-    dispatch(setEdit({value: true,index: index}));
+    console.log("handleedit");
+
+    dispatch(setEdit({ value: true, index: index }));
     history.push("/account");
   };
 
@@ -53,7 +70,9 @@ const Contact: React.FC<ContactType> = ({ contact, index }) => {
         <button className="btn" onClick={() => handleDelete(index)}>
           delete
         </button>
-        <button className="btn" onClick={()=>handleEdit()}>edit</button>
+        <button className="btn" onClick={() => handleEdit()}>
+          edit
+        </button>
       </div>
     </div>
   );

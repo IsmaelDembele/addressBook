@@ -7,6 +7,7 @@ import { RootState } from "../../app/store";
 import { addNewContact, setEdit, removeContact } from "../../features/userDataSlice";
 
 const initialContactState = {
+  id: -1,
   useremail: "",
   firstname: "",
   lastname: "",
