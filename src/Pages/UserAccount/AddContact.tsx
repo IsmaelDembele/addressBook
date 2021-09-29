@@ -1,4 +1,4 @@
-// import React from "react";
+import { gql, useMutation } from "@apollo/client";
 import TextField from "@material-ui/core/TextField";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,22 +17,60 @@ const initialContactState = {
   note: "",
 };
 
+const DELETE_CONTACT_MUTATION = gql`
+  mutation DeleteContactMutation($token: String!, $id: Int!) {
+    deleteContact(token: $token, id: $id)
+  }
+`;
+
+const ADD_CONTACT_MUTATION = gql`
+  mutation Mutation(
+    $useremail: String!
+    $firstname: String
+    $lastname: String
+    $email: String
+    $phone: String
+    $address: String
+    $note: String
+  ) {
+    addContact(
+      useremail: $useremail
+      firstname: $firstname
+      lastname: $lastname
+      email: $email
+      phone: $phone
+      address: $address
+      note: $note
+    )
+  }
+`;
+
 const AddContact = () => {
   const [newContact, setNewContact] = useState(initialContactState);
-
   const dispatch = useDispatch();
-
   const user = useSelector((state: RootState) => state.userData);
+  const connection = useSelector((state: RootState) => state.connection);
   const history = useHistory();
+  const [addContact /*, { data: acData, loading: acLoading, error: acError }*/] =
+    useMutation(ADD_CONTACT_MUTATION);
+  const [deleteContact /**,{ data, loading, error } */] = useMutation(DELETE_CONTACT_MUTATION);
 
   useEffect(() => {
+    console.log("test add contact useEffect");
+
     if (user.editContact.value) {
       const { contactList, editContact } = user;
       setNewContact(contactList[editContact.index]);
       dispatch(setEdit({ value: false, index: editContact.index }));
       dispatch(removeContact(editContact.index));
+      deleteContact({
+        variables: {
+          token: connection.token,
+          id: contactList[editContact.index].id,
+        },
+      });
     }
-  }, [user, dispatch]);
+  }, [user, dispatch, connection.token, deleteContact]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -42,10 +80,33 @@ const AddContact = () => {
       [name]: value,
     }));
   };
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleClick = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-    if (newContact?.firstname === null) return;
-    dispatch(addNewContact(newContact));
+
+    setNewContact(prev => ({
+      ...prev,
+      useremail: user.email,
+    }));
+
+    console.log(newContact);
+
+    if (newContact?.firstname.length === 0 || user.email.length === 0) {
+      return;
+    }
+
+    dispatch(addNewContact({ ...newContact, useremail: user.email }));
+
+    await addContact({
+      variables: {
+        useremail: user.email,
+        firstname: newContact.firstname,
+        lastname: newContact.lastname,
+        email: newContact.email,
+        phone: newContact.phone,
+        address: newContact.address,
+        note: newContact.note,
+      },
+    });
     setNewContact(initialContactState);
     history.push("/"); // this will redirect to the viewContact page
   };

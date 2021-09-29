@@ -7,7 +7,7 @@ import { RootState } from "../../app/store";
 
 import { useHistory } from "react-router-dom";
 
-import { emailCheck, passwordCheck } from "../../helper/validator_fn";
+import { emailCheck, passwordCheck,LOCAL_STORAGE_VARIABLE } from "../../helper/helper";
 
 import { useQuery, gql } from "@apollo/client";
 
@@ -19,6 +19,11 @@ const errorInitialValue = {
   passwordConfirm: false,
 };
 
+// const LOCAL_STORAGE_VARIABLE = {
+//   tokenKey: "token",
+//   emailKey: "email",
+// };
+
 const pwLength = 5;
 
 const LOGIN_QUERY = gql`
@@ -27,10 +32,28 @@ const LOGIN_QUERY = gql`
   }
 `;
 
+const VERIFY_TOKEN_QUERY = gql`
+  query Query($token: String!, $useremail: String!) {
+    verifyToken(token: $token, useremail: $useremail)
+  }
+`;
+
 const SignIn = () => {
   const [loginInfo, setLoginInfo] = useState({ email: "", password: "" });
   const [myError, setMyError] = useState(errorInitialValue);
-  const { loading, error, data, refetch } = useQuery(LOGIN_QUERY, {
+  const saveToken = localStorage.getItem(LOCAL_STORAGE_VARIABLE.tokenKey) || "";
+  const saveEmail = localStorage.getItem(LOCAL_STORAGE_VARIABLE.emailKey) || "";
+
+  const {
+    loading: verify_loading,
+    //error: verify_error,
+    data: verify_data,
+    refetch: verifyRefetch,
+  } = useQuery(VERIFY_TOKEN_QUERY, {
+    variables: { token: saveToken, useremail: saveEmail },
+  });
+
+  const { /*loading, error,*/ data, refetch } = useQuery(LOGIN_QUERY, {
     variables: { email: loginInfo.email, password: loginInfo.password },
   });
 
@@ -38,12 +61,34 @@ const SignIn = () => {
 
   const dispatch = useDispatch();
   const isConnected = useSelector((state: RootState) => state.connection.value);
-  // const user = useSelector((state: RootState) => state.userData.email);
 
   useEffect(() => {
     console.log("is connected", isConnected);
-    if (isConnected) history.push("/account");
+    if (isConnected) {
+      history.push("/account");
+    } else {
+      verifyRefetch({
+        token: saveToken,
+        useremail: saveEmail,
+      });
+    }
   }, [isConnected, history]);
+
+  useEffect(() => {
+    console.log(verify_data, "------verifydata------");
+
+    if (saveEmail && saveToken && verify_data) {
+      if (verify_data.verifyToken === true) {
+        const _login = {
+          connected: true,
+          token: saveToken,
+        };
+        dispatch(logInUser(_login));
+        dispatch(connectedUser(saveEmail));
+        history.push("/account");
+      }
+    }
+  }, [verify_data]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): void => {
     const { value, name } = e.target;
@@ -56,7 +101,6 @@ const SignIn = () => {
 
     if (name === "password") {
       const test = value.length >= pwLength || value === "";
-
       passwordCheck(setMyError, test);
     }
   };
@@ -68,11 +112,18 @@ const SignIn = () => {
       email: loginInfo.email,
       password: loginInfo.password,
     });
-    console.log("data inside login", data);
-    const token: string = data.login;
-    const connected = token.length > 0;
-    dispatch(logInUser({connected, token}));
-    dispatch(connectedUser(loginInfo.email));
+    // console.log("data inside login", data);
+    if (data) {
+      const token: string = data?.login;
+      const connected = token.length > 0;
+      //saving the token to localStorage
+
+      localStorage.setItem(LOCAL_STORAGE_VARIABLE.emailKey, loginInfo.email);
+      localStorage.setItem(LOCAL_STORAGE_VARIABLE.tokenKey, token);
+      dispatch(logInUser({ connected, token }));
+      dispatch(connectedUser(loginInfo.email));
+    }
+
     setLoginInfo({ email: "", password: "" });
   };
 

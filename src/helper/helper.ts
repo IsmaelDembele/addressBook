@@ -1,5 +1,3 @@
-import validator from "validator";
-
 export interface ISignUpInfo {
   firstname: string;
   lastname: string;
@@ -35,6 +33,11 @@ export type TSetError = React.Dispatch<
     passwordConfirm: boolean;
   }>
 >;
+
+export const LOCAL_STORAGE_VARIABLE = {
+  tokenKey: "token",
+  emailKey: "email",
+};
 
 export const firstnameCheck = (entry: ISignUpInfo, setError: TSetError, test: boolean): void => {
   if (!test) {

@@ -7,12 +7,16 @@ import { RootState } from "../../app/store";
 import { logOutUser } from "../../features/connectionSlice";
 import { connectedUser } from "../../features/userDataSlice";
 
+import { LOCAL_STORAGE_VARIABLE } from "../../helper/helper";
+
 const Header = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const isConnected = useSelector((state: RootState) => state.connection.value);
 
   const handleSignOut = () => {
+    localStorage.removeItem(LOCAL_STORAGE_VARIABLE.emailKey);
+    localStorage.removeItem(LOCAL_STORAGE_VARIABLE.tokenKey);
     dispatch(logOutUser());
     dispatch(connectedUser(""));
     history.push("/");

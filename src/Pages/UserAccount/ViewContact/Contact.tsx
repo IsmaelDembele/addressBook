@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { IContact } from "../data";
 import { removeContact, setEdit } from "../../../features/userDataSlice";
 import { useHistory } from "react-router-dom";
 import { useMutation, gql } from "@apollo/client";
+import { RootState } from "../../../app/store";
 
 // import { RootState } from "../../../app/store";
 
@@ -13,30 +14,31 @@ interface ContactType {
 }
 
 const DELETE_CONTACT_MUTATION = gql`
-  mutation DeleteContactMutation($useremail: String!, $id: Int!) {
-    deleteContact(useremail: $useremail, id: $id)
+  mutation DeleteContactMutation($token: String!, $id: Int!) {
+    deleteContact(token: $token, id: $id)
   }
 `;
 
 const Contact: React.FC<ContactType> = ({ contact, index }) => {
-  const { id, useremail, firstname, lastname, email, phone, address, note } = contact;
-  const [deleteContact, { data, loading, error }] = useMutation(DELETE_CONTACT_MUTATION);
+  const { id /** useremail,*/,  firstname, lastname, email, phone, address, note } = contact;
+  const [deleteContact, { data, /*loading, error*/ }] = useMutation(DELETE_CONTACT_MUTATION);
 
   const dispatch = useDispatch();
-  // const edit = useSelector((state:RootState)=>state.userData.editContact);
+  const connection = useSelector((state: RootState) => state.connection);
   const history = useHistory();
 
   useEffect(() => {
-    console.log(data);
+    console.log("loop test contact");
+    
     if (data?.deleteContact) dispatch(removeContact(index));
-  }, [data]);
+  }, [data,dispatch,index]);
 
   const handleDelete = (index: number) => {
     console.log("removing data");
 
     deleteContact({
       variables: {
-        useremail: useremail,
+        token: connection.token,
         id: id,
       },
     });

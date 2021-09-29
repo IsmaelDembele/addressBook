@@ -31,9 +31,9 @@ const GET_CONTACTS_QUERY = gql`
 const UserAccount = () => {
   const [type, setType] = useState<String>(options.VIEWCONTACT);
   const user = useSelector((state: RootState) => state.userData);
-  const edit = useSelector((state: RootState) => state.userData.editContact);
+  // const edit = useSelector((state: RootState) => state.userData.editContact);
 
-  const { loading, error, data, refetch } = useQuery(GET_CONTACTS_QUERY, {
+  const { /*loading, error,*/ data, refetch } = useQuery(GET_CONTACTS_QUERY, {
     variables: { useremail: user.email },
   });
 
@@ -42,15 +42,19 @@ const UserAccount = () => {
   //get data from back-end and pass it to userData
 
   useEffect(() => {
-    if (edit.value) {
+    console.log("loop test userAccount index");
+
+    refetch({
+      useremail: user.email,
+    });
+    if (user.editContact.value) {
       setType(options.ADDCONTACT);
     }
-  }, [edit]);
-  useEffect(() => {
-    // console.log(data.getContacts);
+  }, [user.editContact, refetch, user.email]);
 
+  useEffect(() => {
     dispatch(initContactList(data?.getContacts));
-  }, [data]);
+  }, [data, dispatch]);
 
   const handleAddContact = (): void => {
     setType(options.ADDCONTACT);

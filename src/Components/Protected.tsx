@@ -1,8 +1,10 @@
 import { Route, Redirect, RouteProps } from "react-router-dom";
-// import { fakeAuth } from '../api/Auth';
-import { useSelector } from "react-redux";
-// import { logInUser, logOutUser } from "../features/connectionSlice";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../app/store";
+import { useQuery, gql } from "@apollo/client";
+import { useEffect } from "react";
+import { logOutUser } from "../features/connectionSlice";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 interface ProtectedProps extends RouteProps {
   // tslint:disable-next-line:no-any
@@ -11,17 +13,38 @@ interface ProtectedProps extends RouteProps {
   children?: any;
 }
 
+const VERIFY_TOKEN_QUERY = gql`
+  query Query($token: String!, $useremail: String!) {
+    verifyToken(token: $token, useremail: $useremail)
+  }
+`;
+
 const Protected = (props: ProtectedProps) => {
   const { component: Component, children, ...rest } = props;
+  const dispatch = useDispatch();
+  const connection = useSelector((state: RootState) => state.connection);
+  const useremail = useSelector((state: RootState) => state.userData.email);
 
-  // const dispatch = useDispatch();
-  const isConnected = useSelector((state: RootState) => state.connection.value);
+  const { loading, /*error,*/ data } = useQuery(VERIFY_TOKEN_QUERY, {
+    variables: { token: connection.token, useremail: useremail },
+    pollInterval: 3600000, //we check every hour to see if the user token is still valid
+  });
+
+  useEffect(() => {
+    if (data?.verifyToken === false) {
+      console.log("disconnect");
+      dispatch(logOutUser());
+    }
+  }, [data, dispatch]);
+
+  // if (loading) return <div>loading...</div>;
+  if (loading) return <div><CircularProgress/></div>;
 
   return (
     <Route
       {...rest}
       render={routeProps =>
-        isConnected ? (
+        connection.value ? (
           Component ? (
             <Component {...routeProps} />
           ) : (

@@ -1,6 +1,5 @@
 import TextField from "@material-ui/core/TextField";
 import { useEffect, useState } from "react";
-import validator from "validator";
 import {
   emailCheck,
   passwordCheck,
@@ -8,7 +7,7 @@ import {
   firstnameCheck,
   lastnameCheck,
   entryCheck,
-} from "../../helper/validator_fn";
+} from "../../helper/helper";
 
 import { gql, useMutation } from "@apollo/client";
 
@@ -43,7 +42,6 @@ const SignUp = () => {
   const [addUser, { data, loading, error }] = useMutation(ADD_USER_MUTATION);
 
   useEffect(() => {
-    console.log("signUp data useEffect", data);
     if (data?.addUser) {
       console.log("new user added");
     }

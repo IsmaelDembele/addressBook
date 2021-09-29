@@ -24,28 +24,7 @@ interface UserDataState {
 
 const initialState: UserDataState = {
   email: "",
-  contactList: [
-    // {
-    //   id:1,
-    //   useremail: "hi@hi.com",
-    //   firstname: "Ismael",
-    //   lastname: "Dembele",
-    //   email: "dembele@gmail.com",
-    //   phone: "757 224 1454",
-    //   address: "12345 Mcknight Dr, Pittsburgh PA 15237",
-    //   note: "I met him in Newport News Va",
-    // },
-    // {
-    //   id:2,
-    //   useremail: "hi@hi.com",
-    //   firstname: "Amadou",
-    //   lastname: "Dembele",
-    //   email: "amadou@gmail.com",
-    //   phone: "757 224 4457",
-    //   address: "1 Washington blv, Newport News VA 23608",
-    //   note: "I met him in Houston, TX",
-    // },
-  ],
+  contactList: [],
   editContact: {
     value: false,
     index: -1,
@@ -65,10 +44,13 @@ export const userDataSlice = createSlice({
 
     addNewContact: (state, action: PayloadAction<IContact>) => {
       if (action.payload !== null) {
+        console.log(JSON.stringify(action.payload, undefined, 2));
         state.contactList.push(action.payload);
+        console.log(JSON.stringify(state, undefined, 2));
       }
     },
     removeContact: (state, action: PayloadAction<number>) => {
+
       state.contactList.splice(action.payload, 1);
     },
     setEdit: (state, action: PayloadAction<EditContactType>) => {
@@ -77,7 +59,13 @@ export const userDataSlice = createSlice({
   },
 });
 
-export const { connectedUser, addNewContact, removeContact, setEdit, initContactList } =
-  userDataSlice.actions;
+export const {
+  connectedUser,
+  addNewContact,
+  removeContact,
+  setEdit,
+  initContactList,
+  // setEditAndRemoveContact,
+} = userDataSlice.actions;
 
 export default userDataSlice.reducer;
