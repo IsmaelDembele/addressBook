@@ -13,7 +13,7 @@ interface IContact {
 
 interface EditContactType {
   value: boolean;
-  index: number;
+  id: number;
 }
 
 interface UserDataState {
@@ -27,7 +27,7 @@ const initialState: UserDataState = {
   contactList: [],
   editContact: {
     value: false,
-    index: -1,
+    id: -1,
   },
 };
 

@@ -5,6 +5,7 @@ import { removeContact, setEdit } from "../../../features/userDataSlice";
 import { useHistory } from "react-router-dom";
 import { useMutation, gql } from "@apollo/client";
 import { RootState } from "../../../app/store";
+import { Refresh } from "@material-ui/icons";
 
 // import { RootState } from "../../../app/store";
 
@@ -33,9 +34,9 @@ const Contact: React.FC<ContactType> = ({ contact, index }) => {
     if (data?.deleteContact) dispatch(removeContact(index));
   }, [data, dispatch, index]);
 
-  const handleDelete = (index: number) => {
+  const handleDelete = () => {
     console.log("removing data");
-
+    //deleting contact from the database
     deleteContact({
       variables: {
         token: connection.token,
@@ -43,13 +44,14 @@ const Contact: React.FC<ContactType> = ({ contact, index }) => {
       },
     });
 
-    // dispatch(removeContact(index));
+    // Refresh the page
+    history.push("/");
   };
 
   const handleEdit = () => {
     console.log("handleedit");
 
-    dispatch(setEdit({ value: true, index: index }));
+    dispatch(setEdit({ value: true, id: id }));
     history.push("/account");
   };
 
@@ -69,7 +71,7 @@ const Contact: React.FC<ContactType> = ({ contact, index }) => {
         <p className="account__info-value">{note}</p>
       </div>
       <div className="account__btn">
-        <button className="btn" onClick={() => handleDelete(index)}>
+        <button className="btn" onClick={() => handleDelete()}>
           delete
         </button>
         <button className="btn" onClick={() => handleEdit()}>

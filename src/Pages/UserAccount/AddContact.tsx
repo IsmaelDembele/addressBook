@@ -60,15 +60,11 @@ const AddContact = () => {
 
     if (user.editContact.value) {
       const { contactList, editContact } = user;
-      setNewContact(contactList[editContact.index]);
-      dispatch(setEdit({ value: false, index: editContact.index }));
-      dispatch(removeContact(editContact.index));
-      deleteContact({
-        variables: {
-          token: connection.token,
-          id: contactList[editContact.index].id,
-        },
+
+      const index = contactList.findIndex(Element => {
+        return Element.id === editContact.id;
       });
+      setNewContact(contactList[index]);
     }
   }, [user, dispatch, connection.token, deleteContact]);
 
@@ -82,7 +78,16 @@ const AddContact = () => {
   };
   const handleClick = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-
+    if (user.editContact) {
+      dispatch(setEdit({ value: false, id: user.editContact.id }));
+      dispatch(removeContact(user.editContact.id));
+      deleteContact({
+        variables: {
+          token: connection.token,
+          id: user.editContact.id,
+        },
+      });
+    }
     setNewContact(prev => ({
       ...prev,
       useremail: user.email,
