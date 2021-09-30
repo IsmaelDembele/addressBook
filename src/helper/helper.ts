@@ -34,6 +34,17 @@ export type TSetError = React.Dispatch<
   }>
 >;
 
+export interface IContact {
+  id: number;
+  useremail: string;
+  firstname: string;
+  lastname?: string;
+  email?: string;
+  phone: string;
+  address?: string;
+  note?: string;
+}
+
 export const LOCAL_STORAGE_VARIABLE = {
   tokenKey: "token",
   emailKey: "email",

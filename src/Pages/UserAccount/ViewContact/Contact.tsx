@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { IContact } from "../data";
+import { IContact } from "../../../helper/helper";
 import { removeContact, setEdit } from "../../../features/userDataSlice";
 import { useHistory } from "react-router-dom";
 import { useMutation, gql } from "@apollo/client";
@@ -20,8 +20,8 @@ const DELETE_CONTACT_MUTATION = gql`
 `;
 
 const Contact: React.FC<ContactType> = ({ contact, index }) => {
-  const { id /** useremail,*/,  firstname, lastname, email, phone, address, note } = contact;
-  const [deleteContact, { data, /*loading, error*/ }] = useMutation(DELETE_CONTACT_MUTATION);
+  const { id /** useremail,*/, firstname, lastname, email, phone, address, note } = contact;
+  const [deleteContact, { data /*loading, error*/ }] = useMutation(DELETE_CONTACT_MUTATION);
 
   const dispatch = useDispatch();
   const connection = useSelector((state: RootState) => state.connection);
@@ -29,9 +29,9 @@ const Contact: React.FC<ContactType> = ({ contact, index }) => {
 
   useEffect(() => {
     console.log("loop test contact");
-    
+
     if (data?.deleteContact) dispatch(removeContact(index));
-  }, [data,dispatch,index]);
+  }, [data, dispatch, index]);
 
   const handleDelete = (index: number) => {
     console.log("removing data");

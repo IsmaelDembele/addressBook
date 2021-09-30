@@ -1,5 +1,5 @@
 import React from "react";
-import { IContact } from "../data";
+import { IContact } from "../../../helper/helper";
 import Contact from "./Contact";
 
 type Data = {

@@ -1,14 +1,9 @@
 .account {
   display: grid;
   grid-template-rows: 7rem 1fr;
-  // height: $page-content-height;
   min-height: $page-content-height;
   justify-items: center;
   align-items: center;
-
-  @include respond(tab-port) {
-    // hei;
-  }
 
   @include respond(phone) {
     grid-template-rows: 10rem 1fr;
@@ -27,7 +22,6 @@
       grid-template-columns: 1fr 15rem 15rem;
     }
     @include respond(phone) {
-      // margin-top: 2rem;
       grid-row: 50% 50%;
       grid-template-columns: repeat(5, 1fr);
     }
@@ -35,13 +29,15 @@
 
   &__menu-contact,
   &__menu-viewContacts {
-    // background-color: red;
+    background-color: $secondary;
     line-height: 3rem;
+    border-radius: 3px;
     cursor: pointer;
     width: 11rem;
     text-align: center;
     text-transform: capitalize;
     border: 1px solid transparent;
+    color: $primary;
     transition: all 1s;
 
     @include respond(phone) {
@@ -50,7 +46,8 @@
     }
 
     &:hover {
-      border: 1px solid #f4eeff;
+      border: 1px solid $secondary;
+      background-color: transparent;
     }
   }
 
@@ -79,13 +76,18 @@
     }
 
     &__input {
-      height: 2rem;
-      border-radius: 7px;
+      height: 2.5rem;
+      border-radius: 3px;
       margin-left: 25%;
       margin-right: -2rem;
       width: 50%;
       border: none;
       outline: none;
+      padding-left: 1rem;
+      color: inherit;
+      font-family: inherit;
+      font-weight: inherit;
+      line-height: inherit;
 
       @include respond(tab-port) {
         margin-left: 15%;
@@ -97,7 +99,6 @@
     &__input:focus {
       border: inherit;
       outline: 1px solid #a6b1e1;
-      padding-left: 0.5rem;
     }
 
     &__button {
@@ -108,9 +109,6 @@
   ////////////////////////////////// add contact
 
   &__add-contact {
-    // justify-self: center;
-    // align-self: center;
-    // width: 100%;
     min-height: 25rem;
     background-color: #fff;
     border-top-left-radius: 5px;
@@ -130,7 +128,6 @@
   }
 
   &__form {
-    // background-color: yellowgreen;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -194,15 +191,11 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    // align-items: center;
-    // justify-items: center;
-    // align-content: center;
   }
 
   &__user-display {
-    align-self:baseline;
+    align-self: baseline;
     min-height: 25rem;
-    // height: auto;
     width: 25%;
     min-width: 30rem;
     line-height: 2rem;
@@ -212,26 +205,18 @@
     background-color: white;
     margin-right: 5rem;
     margin-bottom: $form-margin-bottom;
-    
+
     @include respond(tab-port) {
       margin-right: 0;
       margin-bottom: $form-margin-bottom-tab;
       width: 60%;
       min-width: 30rem;
     }
-    @include respond(phone) {
-      // margin-right: 0;
-      // margin-bottom: $form-margin-bottom-tab;
-      // width: 80%;
-      // min-width: 30rem;
-    }
   }
 
   &__fullname-display {
-    // display: block;
     border-top-right-radius: 4px;
     border-top-left-radius: 4px;
-    // width: calc(100% + 2rem);
     background-color: $primary;
     color: white;
     height: 4rem;
@@ -245,11 +230,9 @@
   &__info {
     display: grid;
     grid-template-columns: 7rem 1fr;
-    grid-template-rows: minmax( max-content,4rem);
+    grid-template-rows: minmax(max-content, 4rem);
 
-    grid-auto-rows: minmax( max-content,4rem);
-    
-    
+    grid-auto-rows: minmax(max-content, 4rem);
   }
 
   &__info-value {
@@ -263,9 +246,7 @@
   }
 
   .btn {
-    // align-self: center;
     width: 35%;
-    // width: 20rem;
     margin-right: 3rem;
     margin-bottom: 0;
     text-transform: capitalize;
