@@ -1,15 +1,21 @@
 import { useState, useEffect } from "react";
 import TextField from "@material-ui/core/TextField";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import { useSelector, useDispatch } from "react-redux";
 import { logInUser } from "../../features/connectionSlice";
 import { connectedUser } from "../../features/userDataSlice";
 import { RootState } from "../../app/store";
-
 import { useHistory } from "react-router-dom";
-
-import { emailCheck, passwordCheck,LOCAL_STORAGE_VARIABLE } from "../../helper/helper";
-
 import { useQuery, gql } from "@apollo/client";
+import {
+  entryCheck,
+  verifyAllEntry,
+  LOCAL_STORAGE_VARIABLE,
+  PASSWORD_LENGTH,
+  PATH,
+  ISignInInfo,
+  IError,
+} from "../../helper/helper";
 
 const errorInitialValue = {
   firstname: false,
@@ -18,13 +24,6 @@ const errorInitialValue = {
   password: false,
   passwordConfirm: false,
 };
-
-// const LOCAL_STORAGE_VARIABLE = {
-//   tokenKey: "token",
-//   emailKey: "email",
-// };
-
-const pwLength = 5;
 
 const LOGIN_QUERY = gql`
   query Query($email: String!, $password: String!) {
@@ -38,45 +37,45 @@ const VERIFY_TOKEN_QUERY = gql`
   }
 `;
 
+const signInInitialValue = {
+  email: "",
+  password: "",
+};
+
 const SignIn = () => {
-  const [loginInfo, setLoginInfo] = useState({ email: "", password: "" });
-  const [myError, setMyError] = useState(errorInitialValue);
+  const [loginInfo, setLoginInfo] = useState<ISignInInfo>(signInInitialValue);
+  const [myError, setMyError] = useState<IError>(errorInitialValue);
   const saveToken = localStorage.getItem(LOCAL_STORAGE_VARIABLE.tokenKey) || "";
   const saveEmail = localStorage.getItem(LOCAL_STORAGE_VARIABLE.emailKey) || "";
 
-  const {
-    loading: verify_loading,
-    //error: verify_error,
-    data: verify_data,
-    refetch: verifyRefetch,
-  } = useQuery(VERIFY_TOKEN_QUERY, {
+  const { data: verify_data, refetch: verifyRefetch } = useQuery(VERIFY_TOKEN_QUERY, {
     variables: { token: saveToken, useremail: saveEmail },
+    fetchPolicy: "network-only",
+    errorPolicy: "all",
   });
 
-  const { /*loading, error,*/ data, refetch } = useQuery(LOGIN_QUERY, {
+  const { loading, data, refetch } = useQuery(LOGIN_QUERY, {
     variables: { email: loginInfo.email, password: loginInfo.password },
+    fetchPolicy: "network-only",
+    errorPolicy: "all",
   });
 
   const history = useHistory();
-
   const dispatch = useDispatch();
   const isConnected = useSelector((state: RootState) => state.connection.value);
 
   useEffect(() => {
-    console.log("is connected", isConnected);
     if (isConnected) {
-      history.push("/account");
+      history.push(PATH.ACCOUNT);
     } else {
       verifyRefetch({
         token: saveToken,
         useremail: saveEmail,
       });
     }
-  }, [isConnected, history]);
+  }, [isConnected, history, saveEmail, saveToken, verifyRefetch]);
 
   useEffect(() => {
-    console.log(verify_data, "------verifydata------");
-
     if (saveEmail && saveToken && verify_data) {
       if (verify_data.verifyToken === true) {
         const _login = {
@@ -85,50 +84,64 @@ const SignIn = () => {
         };
         dispatch(logInUser(_login));
         dispatch(connectedUser(saveEmail));
-        history.push("/account");
+        history.push(PATH.ACCOUNT);
       }
     }
-  }, [verify_data]);
+  }, [verify_data, dispatch, history, saveToken, saveEmail]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): void => {
     const { value, name } = e.target;
+    let test = true;
+
     setLoginInfo(prev => ({ ...prev, [name]: value }));
 
     if (name === "email") {
-      const test = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) || value === "";
-      emailCheck(setMyError, test);
+      test = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) || value === "";
     }
 
     if (name === "password") {
-      const test = value.length >= pwLength || value === "";
-      passwordCheck(setMyError, test);
+      test = value.length >= PASSWORD_LENGTH || value === "";
     }
+    entryCheck(setMyError, name, test);
   };
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
     e.preventDefault();
 
+    if (verifyAllEntry(loginInfo, setMyError)) {
+      return;
+    }
+
     refetch({
       email: loginInfo.email,
       password: loginInfo.password,
     });
-    // console.log("data inside login", data);
     if (data) {
-      const token: string = data?.login;
+      const token: string = data.login;
       const connected = token.length > 0;
-      //saving the token to localStorage
 
-      localStorage.setItem(LOCAL_STORAGE_VARIABLE.emailKey, loginInfo.email);
-      localStorage.setItem(LOCAL_STORAGE_VARIABLE.tokenKey, token);
-      dispatch(logInUser({ connected, token }));
-      dispatch(connectedUser(loginInfo.email));
+      if (connected) {
+        // save login information
+        localStorage.setItem(LOCAL_STORAGE_VARIABLE.emailKey, loginInfo.email);
+        localStorage.setItem(LOCAL_STORAGE_VARIABLE.tokenKey, token);
+        //connect the user
+        dispatch(logInUser({ connected, token }));
+        dispatch(connectedUser(loginInfo.email));
+      } else {
+        alert("invalid email/password!!!");
+      }
     }
 
-    setLoginInfo({ email: "", password: "" });
+    setLoginInfo(signInInitialValue);
   };
 
   return (
     <div className="landing-page__sign-in">
+      {loading && (
+        <div className="center">
+          <CircularProgress />
+        </div>
+      )}
       <form action="" method="#" className="landing-page__sign-in__form">
         <div className="landing-page__sign-in__text">Sign in</div>
         <div className="landing-page__sign-in__email">

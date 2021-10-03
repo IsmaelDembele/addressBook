@@ -4,7 +4,7 @@ import { RootState } from "../app/store";
 import { useQuery, gql } from "@apollo/client";
 import { useEffect } from "react";
 import { logOutUser } from "../features/connectionSlice";
-import CircularProgress from '@material-ui/core/CircularProgress';
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 interface ProtectedProps extends RouteProps {
   // tslint:disable-next-line:no-any
@@ -25,20 +25,21 @@ const Protected = (props: ProtectedProps) => {
   const connection = useSelector((state: RootState) => state.connection);
   const useremail = useSelector((state: RootState) => state.userData.email);
 
-  const { loading, /*error,*/ data } = useQuery(VERIFY_TOKEN_QUERY, {
+  const { loading, data } = useQuery(VERIFY_TOKEN_QUERY, {
     variables: { token: connection.token, useremail: useremail },
     pollInterval: 3600000, //we check every hour to see if the user token is still valid
   });
 
   useEffect(() => {
     if (data?.verifyToken === false) {
-      console.log("disconnect");
       dispatch(logOutUser());
     }
   }, [data, dispatch]);
 
-  // if (loading) return <div>loading...</div>;
-  if (loading) return <div><CircularProgress/></div>;
+  if (loading)
+    <div className="center">
+      <CircularProgress />
+    </div>;
 
   return (
     <Route

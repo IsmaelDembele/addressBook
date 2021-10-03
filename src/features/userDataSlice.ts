@@ -44,13 +44,10 @@ export const userDataSlice = createSlice({
 
     addNewContact: (state, action: PayloadAction<IContact>) => {
       if (action.payload !== null) {
-        console.log(JSON.stringify(action.payload, undefined, 2));
         state.contactList.push(action.payload);
-        console.log(JSON.stringify(state, undefined, 2));
       }
     },
     removeContact: (state, action: PayloadAction<number>) => {
-
       state.contactList.splice(action.payload, 1);
     },
     setEdit: (state, action: PayloadAction<EditContactType>) => {
@@ -59,13 +56,7 @@ export const userDataSlice = createSlice({
   },
 });
 
-export const {
-  connectedUser,
-  addNewContact,
-  removeContact,
-  setEdit,
-  initContactList,
-  // setEditAndRemoveContact,
-} = userDataSlice.actions;
+export const { connectedUser, addNewContact, removeContact, setEdit, initContactList } =
+  userDataSlice.actions;
 
 export default userDataSlice.reducer;

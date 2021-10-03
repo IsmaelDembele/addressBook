@@ -7,6 +7,7 @@ import { RootState } from "../../app/store";
 import { useQuery, gql } from "@apollo/client";
 import { initContactList } from "../../features/userDataSlice";
 import { IContact } from "../../helper/helper";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const options = {
   ADDCONTACT: "addContact",
@@ -34,7 +35,7 @@ const UserAccount = () => {
   const [searchResult, setSearchResult] = useState<IContact[]>([]);
   const user = useSelector((state: RootState) => state.userData);
 
-  const { /*loading, error,*/ data, refetch } = useQuery(GET_CONTACTS_QUERY, {
+  const { loading,/* error,*/ data, refetch } = useQuery(GET_CONTACTS_QUERY, {
     variables: { useremail: user.email },
   });
 
@@ -78,6 +79,11 @@ const UserAccount = () => {
 
   return (
     <section className="account">
+      {loading && (
+        <div className="center">
+          <CircularProgress />
+        </div>
+      )}
       <div className="account__menu-bar">
         <div className="account__search-bar">
           <input

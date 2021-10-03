@@ -1,4 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
+import CircularProgress  from "@material-ui/core/CircularProgress";
 import TextField from "@material-ui/core/TextField";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -51,9 +52,10 @@ const AddContact = () => {
   const user = useSelector((state: RootState) => state.userData);
   const connection = useSelector((state: RootState) => state.connection);
   const history = useHistory();
-  const [addContact /*, { data: acData, loading: acLoading, error: acError }*/] =
+  const [addContact, { loading } /*, { data: acData, error: acError }*/] =
     useMutation(ADD_CONTACT_MUTATION);
-  const [deleteContact /**,{ data, loading, error } */] = useMutation(DELETE_CONTACT_MUTATION);
+  const [deleteContact, { loading: delete_loading } /**,{ data, loading, error } */] =
+    useMutation(DELETE_CONTACT_MUTATION);
 
   useEffect(() => {
     console.log("test add contact useEffect");
@@ -118,6 +120,11 @@ const AddContact = () => {
 
   return (
     <div className="account__add-contact">
+      {(loading || delete_loading) && (
+        <div className="center">
+          <CircularProgress />
+        </div>
+      )}
       <div className="account__add-title">Add the new contact information</div>
       <form action="#" className="account__form">
         <div className="account__add-fname">

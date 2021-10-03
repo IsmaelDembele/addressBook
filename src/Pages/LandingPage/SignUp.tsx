@@ -1,17 +1,11 @@
 import TextField from "@material-ui/core/TextField";
 import { useEffect, useState } from "react";
-import {
-  emailCheck,
-  passwordCheck,
-  passwordConfirmCheck,
-  firstnameCheck,
-  lastnameCheck,
-  entryCheck,
-} from "../../helper/helper";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import CustomizedDialogs from "../../Components/dialog";
+
+import { entryCheck, verifyAllEntry, PASSWORD_LENGTH } from "../../helper/helper";
 
 import { gql, useMutation } from "@apollo/client";
-
-const pwLength = 5;
 
 const ADD_USER_MUTATION = gql`
   mutation Mutation($email: String!, $firstname: String!, $lastname: String!, $password: String!) {
@@ -38,8 +32,12 @@ export const errorInitialValue = {
 const SignUp = () => {
   const [signUpInfo, setSignUpInfo] = useState(signUpInfoInitialValue);
   const [myError, setMyError] = useState(errorInitialValue);
+  const [dialog, setDialog] = useState({ _open: false, success: false });
 
-  const [addUser, { data, loading, error }] = useMutation(ADD_USER_MUTATION);
+  const [addUser, { data, loading }] = useMutation(ADD_USER_MUTATION, {
+    fetchPolicy: "network-only",
+    errorPolicy: "all",
+  });
 
   useEffect(() => {
     if (data?.addUser) {
@@ -50,42 +48,34 @@ const SignUp = () => {
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): void => {
     e.preventDefault();
     const { name, value } = e.target;
+    let test = true;
 
     setSignUpInfo(prev => ({
       ...prev,
       [name]: value,
     }));
 
-    if (name === "firstname") {
-      const test = value.length >= 2 || value === "";
-      firstnameCheck(signUpInfo, setMyError, test);
-    }
-
-    if (name === "lastname") {
-      const test = value.length >= 2 || value === "";
-      lastnameCheck(signUpInfo, setMyError, test);
+    if (name === "firstname" || name === "lastname") {
+      test = value.length >= 2 || value === "";
     }
 
     if (name === "email") {
-      const test = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) || value === "";
-      emailCheck(setMyError, test);
+      test = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) || value === "";
     }
 
     if (name === "password") {
-      const test = value.length >= pwLength || value === "";
-
-      passwordCheck(setMyError, test);
+      test = value.length >= PASSWORD_LENGTH || value === "";
     }
     if (name === "passwordConfirm") {
-      const test = value === signUpInfo.password || value === "";
-      passwordConfirmCheck(signUpInfo, setMyError, test);
+      test = value === signUpInfo.password || value === "";
     }
+    entryCheck(setMyError, name, test);
   };
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
 
-    if (entryCheck(signUpInfo, setMyError)) {
+    if (verifyAllEntry(signUpInfo, setMyError)) {
       return;
     }
 
@@ -98,16 +88,27 @@ const SignUp = () => {
       },
     });
 
-    if (error) {
-      console.log("error", error);
-    }
-    // console.log("data", data);
     setSignUpInfo(signUpInfoInitialValue);
+  };
+
+  const closeDialog = () => {
+    setDialog({ _open: false, success: true });
   };
 
   return (
     <div className="landing-page__sign-up">
-      {loading && <div>loading... </div>}
+      {loading && (
+        <div className="center">
+          <CircularProgress />
+        </div>
+      )}
+
+      {data && (
+        <div onClick={() => closeDialog()}>
+          <CustomizedDialogs {...dialog} />
+        </div>
+      )}
+
       <form action="" method="#" className="landing-page__sign-up__form">
         <div className="landing-page__sign-up__text">Create account</div>
         <div className="landing-page__sign-up__fname">
@@ -120,6 +121,7 @@ const SignUp = () => {
             type="text"
             value={signUpInfo.firstname}
             error={myError.firstname}
+            required
             onChange={e => handleChange(e)}
           />
         </div>
@@ -133,6 +135,7 @@ const SignUp = () => {
             type="text"
             value={signUpInfo.lastname}
             error={myError.lastname}
+            required
             onChange={e => handleChange(e)}
           />
         </div>
@@ -146,6 +149,7 @@ const SignUp = () => {
             type="email"
             value={signUpInfo.email}
             error={myError.email}
+            required
             onChange={e => handleChange(e)}
           />
         </div>
@@ -159,6 +163,7 @@ const SignUp = () => {
             type="password"
             value={signUpInfo.password}
             error={myError.password}
+            required
             onChange={e => handleChange(e)}
           />
         </div>
@@ -172,12 +177,13 @@ const SignUp = () => {
             type="password"
             value={signUpInfo.passwordConfirm}
             error={myError.passwordConfirm}
+            required
             onChange={e => handleChange(e)}
           />
         </div>
         <div className="landing-page__sign-up__btn">
           <button type="submit" className="btn" onClick={e => handleClick(e)}>
-            Sign In
+            Sign Up
           </button>
         </div>
       </form>

@@ -9,12 +9,10 @@ type Data = {
 const ViewContact: React.FC<Data> = props => {
   const { data } = props;
 
-  // console.log(data.data);
-
   return (
     <div className="account__user-list">
       {data?.map((contact, index) => {
-        return <Contact key={index} contact={contact} index={index}  />;
+        return <Contact key={index} contact={contact} index={index} />;
       })}
     </div>
   );

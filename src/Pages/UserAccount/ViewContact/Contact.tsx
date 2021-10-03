@@ -5,9 +5,7 @@ import { removeContact, setEdit } from "../../../features/userDataSlice";
 import { useHistory } from "react-router-dom";
 import { useMutation, gql } from "@apollo/client";
 import { RootState } from "../../../app/store";
-import { Refresh } from "@material-ui/icons";
-
-// import { RootState } from "../../../app/store";
+import { CircularProgress } from "@material-ui/core";
 
 interface ContactType {
   contact: IContact;
@@ -22,7 +20,7 @@ const DELETE_CONTACT_MUTATION = gql`
 
 const Contact: React.FC<ContactType> = ({ contact, index }) => {
   const { id /** useremail,*/, firstname, lastname, email, phone, address, note } = contact;
-  const [deleteContact, { data /*loading, error*/ }] = useMutation(DELETE_CONTACT_MUTATION);
+  const [deleteContact, { data, loading /*, error*/ }] = useMutation(DELETE_CONTACT_MUTATION);
 
   const dispatch = useDispatch();
   const connection = useSelector((state: RootState) => state.connection);
@@ -57,6 +55,11 @@ const Contact: React.FC<ContactType> = ({ contact, index }) => {
 
   return (
     <div className="account__user-display">
+      {loading && (
+        <div className="center">
+          <CircularProgress />
+        </div>
+      )}
       <div className="account__fullname-display">{`${firstname} ${lastname}`}</div>
       <div className="account__info">
         <p className="account__email-display">Email : </p>

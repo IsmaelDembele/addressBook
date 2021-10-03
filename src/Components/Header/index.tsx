@@ -6,7 +6,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../app/store";
 import { logOutUser } from "../../features/connectionSlice";
 import { connectedUser } from "../../features/userDataSlice";
-
 import { LOCAL_STORAGE_VARIABLE } from "../../helper/helper";
 
 const Header = () => {
@@ -29,12 +28,6 @@ const Header = () => {
           <img src={logo} alt="" />
         </div>
       </Link>
-
-      {/* {isConnected && (
-        <Link to="account" className="nav__account">
-          <div>My Account</div>
-        </Link>
-      )} */}
 
       {isConnected && (
         <div className="nav__sign-up" onClick={() => handleSignOut()}>

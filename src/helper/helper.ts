@@ -5,25 +5,18 @@ export interface ISignUpInfo {
   password: string;
   passwordConfirm: string;
 }
-
-export interface IError {
-  firstname?: boolean;
-  lastname?: boolean;
-  email: boolean;
-  password: boolean;
-  passwordConfirm?: boolean;
+export interface ISignInInfo {
+  email: string;
+  password: string;
 }
 
-export type TSetSignUpInfo = React.Dispatch<
-  React.SetStateAction<{
-    firstname: string;
-    lastname: string;
-    email: string;
-    password: string;
-    passwordConfirm: string;
-  }>
->;
-
+export interface IError {
+  firstname: boolean;
+  lastname: boolean;
+  email: boolean;
+  password: boolean;
+  passwordConfirm: boolean;
+}
 export type TSetError = React.Dispatch<
   React.SetStateAction<{
     firstname: boolean;
@@ -50,80 +43,23 @@ export const LOCAL_STORAGE_VARIABLE = {
   emailKey: "email",
 };
 
-export const firstnameCheck = (entry: ISignUpInfo, setError: TSetError, test: boolean): void => {
-  if (!test) {
-    setError(prev => ({
-      ...prev,
-      firstname: true,
-    }));
-  } else {
-    setError(prev => ({
-      ...prev,
-      firstname: false,
-    }));
-  }
-};
-export const lastnameCheck = (entry: ISignUpInfo, setError: TSetError, test: boolean): void => {
-  if (!test) {
-    setError(prev => ({
-      ...prev,
-      lastname: true,
-    }));
-  } else {
-    setError(prev => ({
-      ...prev,
-      lastname: false,
-    }));
-  }
-};
-export const emailCheck = (setError: TSetError, test: boolean): void => {
-  if (!test) {
-    setError(prev => ({
-      ...prev,
-      email: true,
-    }));
-  } else {
-    setError(prev => ({
-      ...prev,
-      email: false,
-    }));
-  }
+export const PASSWORD_LENGTH = 5;
+export const PATH = {
+  HOME: "/",
+  ACCOUNT: "/account",
 };
 
-export const passwordCheck = ( setError: TSetError, test: boolean): void => {
-  // console.log(entry);
-
-  if (!test) {
-    setError(prev => ({
-      ...prev,
-      password: true,
-    }));
-  } else {
-    setError(prev => ({
-      ...prev,
-      password: false,
-    }));
-  }
-};
-export const passwordConfirmCheck = (
-  entry: ISignUpInfo,
-  setError: TSetError,
-  test: boolean
-): void => {
-  if (!test) {
-    setError(prev => ({
-      ...prev,
-      passwordConfirm: true,
-    }));
-  } else {
-    setError(prev => ({
-      ...prev,
-      passwordConfirm: false,
-    }));
-  }
+//if the user filled a field incorrectly, we inform him.
+export const entryCheck = (setError: TSetError, name: string, test: boolean) => {
+  setError(prev => ({
+    ...prev,
+    [name]: !test,
+  }));
 };
 
-export const entryCheck = (entry: ISignUpInfo, setError: TSetError): boolean => {
+//when the user click submit, we verify that there are no empty fields.
+// If so, we signal that to the user.
+export const verifyAllEntry = (entry: ISignUpInfo | ISignInInfo, setError: TSetError): boolean => {
   let test = false;
   for (const [key, value] of Object.entries(entry)) {
     if (value === "") {
