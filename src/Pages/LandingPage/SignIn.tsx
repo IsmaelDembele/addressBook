@@ -15,15 +15,9 @@ import {
   PATH,
   ISignInInfo,
   IError,
+  ERROR_INITIAL_VALUE,
+  FIELDS,
 } from "../../helper/helper";
-
-const errorInitialValue = {
-  firstname: false,
-  lastname: false,
-  email: false,
-  password: false,
-  passwordConfirm: false,
-};
 
 const LOGIN_QUERY = gql`
   query Query($email: String!, $password: String!) {
@@ -37,14 +31,14 @@ const VERIFY_TOKEN_QUERY = gql`
   }
 `;
 
-const signInInitialValue = {
+const SIGNIN_INITIAL_VALUE = {
   email: "",
   password: "",
 };
 
 const SignIn = () => {
-  const [loginInfo, setLoginInfo] = useState<ISignInInfo>(signInInitialValue);
-  const [myError, setMyError] = useState<IError>(errorInitialValue);
+  const [loginInfo, setLoginInfo] = useState<ISignInInfo>(SIGNIN_INITIAL_VALUE);
+  const [myError, setMyError] = useState<IError>(ERROR_INITIAL_VALUE);
   const saveToken = localStorage.getItem(LOCAL_STORAGE_VARIABLE.tokenKey) || "";
   const saveEmail = localStorage.getItem(LOCAL_STORAGE_VARIABLE.emailKey) || "";
 
@@ -95,11 +89,10 @@ const SignIn = () => {
 
     setLoginInfo(prev => ({ ...prev, [name]: value }));
 
-    if (name === "email") {
+    if (name === FIELDS.EMAIL) {
       test = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) || value === "";
     }
-
-    if (name === "password") {
+    if (name === FIELDS.PASSWORD) {
       test = value.length >= PASSWORD_LENGTH || value === "";
     }
     entryCheck(setMyError, name, test);
@@ -116,23 +109,22 @@ const SignIn = () => {
       email: loginInfo.email,
       password: loginInfo.password,
     });
-    if (data) {
-      const token: string = data.login;
-      const connected = token.length > 0;
 
-      if (connected) {
-        // save login information
-        localStorage.setItem(LOCAL_STORAGE_VARIABLE.emailKey, loginInfo.email);
-        localStorage.setItem(LOCAL_STORAGE_VARIABLE.tokenKey, token);
-        //connect the user
-        dispatch(logInUser({ connected, token }));
-        dispatch(connectedUser(loginInfo.email));
-      } else {
-        alert("invalid email/password!!!");
-      }
+    const token: string = data?.login || "";
+    const connected = token.length > 0;
+
+    if (connected) {
+      // save login information
+      localStorage.setItem(LOCAL_STORAGE_VARIABLE.emailKey, loginInfo.email);
+      localStorage.setItem(LOCAL_STORAGE_VARIABLE.tokenKey, token);
+      //connect the user
+      dispatch(logInUser({ connected, token }));
+      dispatch(connectedUser(loginInfo.email));
+    } else {
+      alert("invalid email/password!!!");
     }
 
-    setLoginInfo(signInInitialValue);
+    setLoginInfo(SIGNIN_INITIAL_VALUE);
   };
 
   return (
@@ -148,7 +140,7 @@ const SignIn = () => {
           <TextField
             id="email"
             label="Email"
-            name="email"
+            name={FIELDS.EMAIL}
             variant="outlined"
             size="small"
             type="email"
@@ -160,7 +152,7 @@ const SignIn = () => {
         <div className="landing-page__sign-in__pwd">
           <TextField
             id="password"
-            name="password"
+            name={FIELDS.PASSWORD}
             label="Password"
             variant="outlined"
             size="small"

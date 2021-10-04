@@ -4,23 +4,24 @@ import "./styles/main.scss";
 import App from "./Components/App";
 import { Provider } from "react-redux";
 import { store } from "./app/store";
-import { useHistory } from "react-router-dom";
 import { ApolloClient, InMemoryCache, ApolloProvider, HttpLink, from } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
-import { PATH } from "./helper/helper";
 
 const httpLink = new HttpLink({
   uri: "http://localhost:4000",
-  // uri: "http://localhost:4000/graphql"
 });
 
+//centralise graphQL error management
 const errorLink = onError(({ graphQLErrors, networkError }) => {
-  const history = useHistory();
   let error = "";
+
   if (graphQLErrors) {
     error += "something went wrong please try again\n";
     graphQLErrors.forEach(({ message, locations, path }) => {
       console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`);
+      if (message.includes("email")) {
+        error = "Please try with a different email\n";
+      }
     });
   }
 
@@ -41,12 +42,12 @@ const client = new ApolloClient({
 });
 
 ReactDOM.render(
-  <React.StrictMode>
+  <React.Fragment>
     <Provider store={store}>
       <ApolloProvider client={client}>
         <App />
       </ApolloProvider>
     </Provider>
-  </React.StrictMode>,
+  </React.Fragment>,
   document.getElementById("root")
 );

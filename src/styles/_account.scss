@@ -2,8 +2,8 @@
   display: grid;
   grid-template-rows: 7rem 1fr;
   min-height: $page-content-height;
-  justify-items: center;
   align-items: center;
+  justify-items: center;
 
   @include respond(phone) {
     grid-template-rows: 10rem 1fr;
@@ -15,8 +15,7 @@
     background-color: #a6b1e1;
     display: grid;
     grid-template-columns: 1fr 15% 15%;
-    align-items: center;
-    justify-content: center;
+    @include align_justify_center;
 
     @include respond(tab-port) {
       grid-template-columns: 1fr 15rem 15rem;
@@ -111,8 +110,8 @@
   &__add-contact {
     min-height: 25rem;
     background-color: #fff;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
+    @include border-top-left-right-radius(5px, 5px);
+    margin-top: 4rem;
 
     display: Grid;
     grid-template-rows: 5rem 1fr;
@@ -120,8 +119,7 @@
   }
 
   &__add-title {
-    border-top-left-radius: inherit;
-    border-top-right-radius: inherit;
+    @include border-top-left-right-radius(inherit, inherit);
     padding: 1.5rem;
     background-color: $primary;
     color: #fff;
@@ -130,8 +128,8 @@
   &__form {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    @include align_justify_center;
+
     padding: 1rem;
     width: 100%;
   }
@@ -150,20 +148,16 @@
   }
 
   &__add-fname {
-    // width: 100%;
   }
   &__add-lname {
-    // width: 100%;
   }
   &__add-email {
-    // width: 100%;
   }
   &__add-phone {
-    // width: 100%;
   }
   &__add-address {
-    // width: 100%;
   }
+
   &__add-note {
     align-self: center;
     textarea {
@@ -200,8 +194,7 @@
     min-width: 30rem;
     line-height: 2rem;
     padding: 1rem;
-    border-top-left-radius: 4px;
-    border-top-left-radius: 4px;
+    @include border-top-left-right-radius(4px, 4px);
     background-color: white;
     margin-right: 5rem;
     margin-bottom: $form-margin-bottom;
@@ -215,8 +208,7 @@
   }
 
   &__fullname-display {
-    border-top-right-radius: 4px;
-    border-top-left-radius: 4px;
+    @include border-top-left-right-radius(4px, 4px);
     background-color: $primary;
     color: white;
     height: 4rem;
@@ -231,7 +223,6 @@
     display: grid;
     grid-template-columns: 7rem 1fr;
     grid-template-rows: minmax(max-content, 4rem);
-
     grid-auto-rows: minmax(max-content, 4rem);
   }
 
@@ -241,8 +232,7 @@
 
   &__btn {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    @include align_justify_center;
   }
 
   .btn {

@@ -19,21 +19,18 @@ const DELETE_CONTACT_MUTATION = gql`
 `;
 
 const Contact: React.FC<ContactType> = ({ contact, index }) => {
-  const { id /** useremail,*/, firstname, lastname, email, phone, address, note } = contact;
-  const [deleteContact, { data, loading /*, error*/ }] = useMutation(DELETE_CONTACT_MUTATION);
+  const { id, firstname, lastname, email, phone, address, note } = contact;
+  const [deleteContact, { data, loading }] = useMutation(DELETE_CONTACT_MUTATION);
 
   const dispatch = useDispatch();
   const connection = useSelector((state: RootState) => state.connection);
   const history = useHistory();
 
   useEffect(() => {
-    console.log("loop test contact");
-
-    if (data?.deleteContact) dispatch(removeContact(index));
+    data?.deleteContact && dispatch(removeContact(index));
   }, [data, dispatch, index]);
 
   const handleDelete = () => {
-    console.log("removing data");
     //deleting contact from the database
     deleteContact({
       variables: {
@@ -47,9 +44,9 @@ const Contact: React.FC<ContactType> = ({ contact, index }) => {
   };
 
   const handleEdit = () => {
-    console.log("handleedit");
-
+    //when edit is true user account will redirect to add contact
     dispatch(setEdit({ value: true, id: id }));
+    //this will take us to add contact page because edit is true
     history.push("/account");
   };
 

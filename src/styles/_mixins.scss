@@ -1,58 +1,9 @@
-// MEDIA QUERY MANAGER
-/*
-0 - 416px:      small - Phone 				// which is 26 * 16
-// 0 - 600px:      Phone 				// which is 37.5 * 16
+@mixin align_justify_center {
+  align-items: center;
+  justify-content: center;
+}
 
-
-600 - 832px:    Tablet portrait		//52 * 16 = 832
-
-960 - 1280px:   Tablet landscape    //80em
-1280 - 1360px small desktop // 85em
-[1280 - 1920] is where our normal styles apply
-1920px + :      Big desktop         120em
-
-$breakpoint arguement choices:
-- sm-phone
-- phone
-- tab-port
-- tab-land
-- sm-desk
-- big-desktop
-
-ORDER: Base + typography > general layout + grid > page layout > components
-
-1em = 16px
-*/
-
-@mixin respond($breakpoint) {
-  // @if $breakpoint == sm-phone {
-  //   @media only screen and (max-width: 26em) {
-  //     @content;
-  //   } //416px
-  // }
-  @if $breakpoint == phone {
-    @media only screen and (max-width: 37.5em) {
-      @content;
-    } //600px
-  }
-  @if $breakpoint == tab-port {
-    @media only screen and (max-width: 52em) {
-      @content;
-    } //832px
-  }
-  // @if $breakpoint == tab-land {
-  //   @media only screen and (max-width: 82em) {
-  //     @content;
-  //   } //1280px
-  // }
-  // @if $breakpoint == sm-desk {
-  //   @media only screen and (max-width: 85em) {
-  //     @content;
-  //   } //1360px
-  // }
-  // @if $breakpoint == big-desktop {
-  //   @media only screen and (min-width: 120em) {
-  //     @content;
-  //   } //1920
-  // }
+@mixin border-top-left-right-radius($left, $right) {
+  border-top-left-radius: $left;
+  border-top-right-radius: $right;
 }

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import SearchRoundedIcon from "@material-ui/icons/SearchRounded";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import { useQuery, gql } from "@apollo/client";
+import { useDispatch, useSelector } from "react-redux";
+import { initContactList } from "../../features/userDataSlice";
+import { RootState } from "../../app/store";
 import AddContact from "./AddContact";
 import ViewContact from "./ViewContact/index";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../app/store";
-import { useQuery, gql } from "@apollo/client";
-import { initContactList } from "../../features/userDataSlice";
-import { IContact } from "../../helper/helper";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import { FIELDS, IContact } from "../../helper/helper";
 
 const options = {
   ADDCONTACT: "addContact",
@@ -34,18 +34,17 @@ const UserAccount = () => {
   const [searchInput, setSearchInput] = useState<string>("");
   const [searchResult, setSearchResult] = useState<IContact[]>([]);
   const user = useSelector((state: RootState) => state.userData);
-
-  const { loading,/* error,*/ data, refetch } = useQuery(GET_CONTACTS_QUERY, {
+  const dispatch = useDispatch();
+  const { loading, data, refetch } = useQuery(GET_CONTACTS_QUERY, {
     variables: { useremail: user.email },
   });
 
-  const dispatch = useDispatch();
-
   useEffect(() => {
-    console.log("loop test userAccount index");
+    // get the updated contact from the database
     refetch({
       useremail: user.email,
     });
+    //redirect to the addcontact page
     if (user.editContact.value) {
       setType(options.ADDCONTACT);
     }
@@ -56,17 +55,15 @@ const UserAccount = () => {
   }, [data, dispatch]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+    const { value } = e.target;
     setSearchInput(value);
 
+    // fiter the contact list by using only the first and last name of all contacts
     const _data = user.contactList.filter(contact => {
       return (contact.firstname + " " + contact.lastname).toLocaleLowerCase().includes(value);
     });
 
-    console.log(_data);
     setSearchResult(_data);
-
-    console.log(name, value);
   };
 
   const handleAddContact = (): void => {
@@ -88,7 +85,7 @@ const UserAccount = () => {
         <div className="account__search-bar">
           <input
             type="text"
-            name="search"
+            name={FIELDS.SEARCH}
             id="search"
             className="account__search-bar__input"
             placeholder="Search contacts"
@@ -107,13 +104,13 @@ const UserAccount = () => {
 
       {type === options.ADDCONTACT && <AddContact />}
 
-      {type === options.VIEWCONTACT && searchResult.length === 0 ? (
+      {/* if there is anything in the search bar we display the
+       filtered data instead of the user data */}
+      {type === options.VIEWCONTACT && searchInput.length === 0 && searchResult.length === 0 ? (
         <ViewContact data={user.contactList} />
       ) : (
         <ViewContact data={searchResult} />
       )}
-
-      {/* {type === options.VIEWCONTACT && <ViewContact data={user.contactList} />} */}
     </section>
   );
 };

@@ -7,8 +7,7 @@
 
   grid-template-columns: 1fr repeat(2, 15%);
 
-  align-items: center;
-  justify-content: center;
+  @include align_justify_center;
   box-shadow: 0px 7px 5px 1px rgba(0, 0, 0, 0.1);
   margin-bottom: 10px;
 

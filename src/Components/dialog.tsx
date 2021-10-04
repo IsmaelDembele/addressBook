@@ -18,7 +18,6 @@ import Typography from "@material-ui/core/Typography";
  * @param theme
  * @returns
  */
-
 const styles = (theme: Theme) =>
   createStyles({
     root: {

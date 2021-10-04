@@ -1,13 +1,21 @@
-import { gql, useMutation } from "@apollo/client";
-import CircularProgress  from "@material-ui/core/CircularProgress";
-import TextField from "@material-ui/core/TextField";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import TextField from "@material-ui/core/TextField";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import { useHistory } from "react-router";
+import { gql, useMutation } from "@apollo/client";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../app/store";
-import { addNewContact, setEdit, removeContact } from "../../features/userDataSlice";
+import { setEdit, removeContact } from "../../features/userDataSlice";
+import {
+  entryCheck,
+  ERROR_INITIAL_VALUE,
+  FIELDS,
+  IContact,
+  IError,
+  NAME_LENGTH_MIN,
+} from "../../helper/helper";
 
-const initialContactState = {
+const INITIAL_CONTACT_STATE = {
   id: -1,
   useremail: "",
   firstname: "",
@@ -47,19 +55,17 @@ const ADD_CONTACT_MUTATION = gql`
 `;
 
 const AddContact = () => {
-  const [newContact, setNewContact] = useState(initialContactState);
+  const [newContact, setNewContact] = useState<IContact>(INITIAL_CONTACT_STATE);
+  const [myError, setMyError] = useState<IError>(ERROR_INITIAL_VALUE);
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.userData);
   const connection = useSelector((state: RootState) => state.connection);
   const history = useHistory();
-  const [addContact, { loading } /*, { data: acData, error: acError }*/] =
-    useMutation(ADD_CONTACT_MUTATION);
-  const [deleteContact, { loading: delete_loading } /**,{ data, loading, error } */] =
-    useMutation(DELETE_CONTACT_MUTATION);
+  const [addContact, { loading }] = useMutation(ADD_CONTACT_MUTATION);
+  const [deleteContact, { loading: delete_loading }] = useMutation(DELETE_CONTACT_MUTATION);
 
   useEffect(() => {
-    console.log("test add contact useEffect");
-
+    //if the user click on edit inside contact.tsx
     if (user.editContact.value) {
       const { contactList, editContact } = user;
 
@@ -72,12 +78,15 @@ const AddContact = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     const { name, value } = e.target;
+    let test = false;
 
-    setNewContact(prev => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name === FIELDS.FIRSTNAME) {
+      test = value.length >= NAME_LENGTH_MIN || value === "";
+    }
+    entryCheck(setMyError, name, test);
+    setNewContact(prev => ({ ...prev, [name]: value }));
   };
+
   const handleClick = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     if (user.editContact) {
@@ -90,19 +99,15 @@ const AddContact = () => {
         },
       });
     }
-    setNewContact(prev => ({
-      ...prev,
-      useremail: user.email,
-    }));
+    //we filled the useremail fields for the user so that he does not have to enter his own email
+    //each time he wants to add a new contact
+    setNewContact(prev => ({ ...prev, useremail: user.email }));
 
-    console.log(newContact);
-
-    if (newContact?.firstname.length === 0 || user.email.length === 0) {
+    if (newContact?.firstname.length < NAME_LENGTH_MIN) {
+      setMyError(prev => ({ ...prev, firstname: true }));
       return;
     }
-
-    dispatch(addNewContact({ ...newContact, useremail: user.email }));
-
+    // add new contact to the database
     await addContact({
       variables: {
         useremail: user.email,
@@ -114,8 +119,10 @@ const AddContact = () => {
         note: newContact.note,
       },
     });
-    setNewContact(initialContactState);
-    history.push("/"); // this will redirect to the viewContact page
+    //reset the contact fields
+    setNewContact(INITIAL_CONTACT_STATE);
+    // this will redirect to the viewContact page, and get updated contact list from the database
+    history.push("/");
   };
 
   return (
@@ -134,8 +141,10 @@ const AddContact = () => {
             variant="outlined"
             size="small"
             type="text"
-            name="firstname"
+            name={FIELDS.FIRSTNAME}
             value={newContact.firstname}
+            required
+            error={myError.firstname}
             onChange={e => handleChange(e)}
           />
         </div>
@@ -146,7 +155,7 @@ const AddContact = () => {
             variant="outlined"
             size="small"
             type="text"
-            name="lastname"
+            name={FIELDS.LASTNAME}
             value={newContact.lastname}
             onChange={e => handleChange(e)}
           />
@@ -158,7 +167,7 @@ const AddContact = () => {
             variant="outlined"
             size="small"
             type="email"
-            name="email"
+            name={FIELDS.EMAIL}
             value={newContact.email}
             onChange={e => handleChange(e)}
           />
@@ -170,7 +179,7 @@ const AddContact = () => {
             variant="outlined"
             size="small"
             type="tel"
-            name="phone"
+            name={FIELDS.PHONE}
             value={newContact.phone}
             onChange={e => handleChange(e)}
           />
@@ -182,7 +191,7 @@ const AddContact = () => {
             variant="outlined"
             size="small"
             type="text"
-            name="address"
+            name={FIELDS.ADDRESS}
             value={newContact.address}
             onChange={e => handleChange(e)}
           />
@@ -192,7 +201,7 @@ const AddContact = () => {
             rows={5}
             placeholder="Add note"
             onChange={e => handleChange(e)}
-            name="note"
+            name={FIELDS.NOTE}
             value={newContact.note}
           />
         </div>

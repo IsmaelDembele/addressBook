@@ -31,12 +31,26 @@ export interface IContact {
   id: number;
   useremail: string;
   firstname: string;
-  lastname?: string;
-  email?: string;
+  lastname: string;
+  email: string;
   phone: string;
-  address?: string;
-  note?: string;
+  address: string;
+  note: string;
 }
+
+export const FIELDS = {
+  ID: "id",
+  USEREMAIL: "useremail",
+  FIRSTNAME: "firstname",
+  PASSWORD: "password",
+  PASSWORD_CONFIRM: "passwordConfirm",
+  LASTNAME: "lastname",
+  EMAIL: "email",
+  PHONE: "phone",
+  ADDRESS: "address",
+  NOTE: "note",
+  SEARCH: "search",
+};
 
 export const LOCAL_STORAGE_VARIABLE = {
   tokenKey: "token",
@@ -44,9 +58,18 @@ export const LOCAL_STORAGE_VARIABLE = {
 };
 
 export const PASSWORD_LENGTH = 5;
+export const NAME_LENGTH_MIN = 2;
 export const PATH = {
   HOME: "/",
   ACCOUNT: "/account",
+};
+
+export const ERROR_INITIAL_VALUE = {
+  firstname: false,
+  lastname: false,
+  email: false,
+  password: false,
+  passwordConfirm: false,
 };
 
 //if the user filled a field incorrectly, we inform him.
