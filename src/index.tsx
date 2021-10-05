@@ -16,7 +16,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   let error = "";
 
   if (graphQLErrors) {
-    error += "something went wrong please try again\n";
+    error += "An error occured, please try again later\n";
     graphQLErrors.forEach(({ message, locations, path }) => {
       console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`);
       if (message.includes("email")) {
@@ -33,7 +33,9 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
     console.log(`[Network error]: ${networkError}`);
     error += "Network error";
   }
+
   alert(error);
+  window.location.reload();
 });
 
 const client = new ApolloClient({

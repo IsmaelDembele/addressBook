@@ -82,7 +82,11 @@ export const entryCheck = (setError: TSetError, name: string, test: boolean) => 
 
 //when the user click submit, we verify that there are no empty fields.
 // If so, we signal that to the user.
-export const verifyAllEntry = (entry: ISignUpInfo | ISignInInfo, setError: TSetError): boolean => {
+export const verifyAllEntry = (
+  entry: ISignUpInfo | ISignInInfo,
+  myError: IError,
+  setError: TSetError
+): boolean => {
   let test = false;
   for (const [key, value] of Object.entries(entry)) {
     if (value === "") {
@@ -91,6 +95,12 @@ export const verifyAllEntry = (entry: ISignUpInfo | ISignInInfo, setError: TSetE
         [key]: true,
       }));
       test = true;
+    }
+  }
+  // eslint-disable-next-line
+  for (const [key,value] of Object.entries(myError)) {
+    if (value === true) {
+      return true;
     }
   }
 

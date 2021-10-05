@@ -71,7 +71,7 @@ const SignUp = () => {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
 
-    if (verifyAllEntry(signUpInfo, setMyError)) {
+    if (verifyAllEntry(signUpInfo, myError, setMyError)) {
       return;
     }
 
