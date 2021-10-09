@@ -21,11 +21,11 @@ const ADD_USER_MUTATION = gql`
 `;
 
 export const SIGNUP_INFO_INITIAL_VALUE = {
-  firstname: "",
-  lastname: "",
-  email: "",
-  password: "",
-  passwordConfirm: "",
+  firstname: "hi",
+  lastname: "hi",
+  email: "hi@hi.com",
+  password: "12345",
+  passwordConfirm: "12345",
 };
 
 const DIALOG_INITIAL_VALUE = { _open: false, success: false };

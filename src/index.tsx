@@ -8,7 +8,10 @@ import { ApolloClient, InMemoryCache, ApolloProvider, HttpLink, from } from "@ap
 import { onError } from "@apollo/client/link/error";
 
 const httpLink = new HttpLink({
-  uri: "http://localhost:4000",
+  uri:
+    process.env.NODE_ENV === "production"
+      ? "https://server-address-book.herokuapp.com/"
+      : "http://localhost:4000/",
 });
 
 //centralise graphQL error management
