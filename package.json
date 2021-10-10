@@ -1,4 +1,4 @@
-app{
+{
   "type": "module",
   "name": "address-book",
   "version": "0.1.0",
